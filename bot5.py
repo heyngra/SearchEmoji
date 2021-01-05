@@ -24,7 +24,7 @@ async def on_ready():
     ids = [795412287908347905, 791417428546420747] # Here you need to put ids of channels to check, separated by commas.
     for aaa in range(len(ids)):
         channel = await client.fetch_channel(ids[aaa])
-        messages = await channel.history(limit=1000000).flatten()
+        messages = await channel.history(limit=None).flatten()
         a = len(messages)
         i = 0
         while i < a:
