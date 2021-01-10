@@ -87,4 +87,4 @@ async def reactions(ctx):
         ilosc.append("<@%s>: %i" % (osoba, globals()[osoba]))
     ilosc2 = '\n'.join(ilosc)
     await ctx.send("Topka osób ze słownikami na serwerze!\n%s" % ilosc2)
-client.run(token)
+client.run(TOKEN)
