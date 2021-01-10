@@ -9,8 +9,6 @@ try:
 except:
     os.system("start installpackages.py\nstart bot5.py")
     exit()
-from TOKEN_FILE import token #if you want to import TOKEN from different file then create file named TOKEN.FILE.py and write in it token='YOUR_TOKEN'
-#token = "" #If you want to use TOKEN inside then remove the '#' and just insert TOKEN.
 messagesslownik = []
 punkty = []
 global osoby
