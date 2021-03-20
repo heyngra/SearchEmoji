@@ -60,7 +60,7 @@ async def on_ready():
     for aaa in range(len(ids)):
         channel = await client.fetch_channel(ids[aaa])
         print(channel.name)
-        async for content in channel.history(limit=None, after=datetime.datetime(2020, 4, 19)).map(transform):
+        async for content in channel.history(limit=None).map(transform):
             if content == None:
                 pass
             else:
