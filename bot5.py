@@ -1,6 +1,7 @@
 import time
 import os
 import time
+import json
 try:
     import discord
     import datetime
@@ -12,6 +13,7 @@ except:
 punkty = []
 global users
 global messagesemoji
+global datajson
 messagesemoji = []
 users = []
 append = []
@@ -35,6 +37,31 @@ elif os.path.isfile("config.yml") == True:
         messagetext = cfg["OutputMessage"]
         autorun = cfg["autorun"]
         offline = cfg["offline"]
+if os.path.isfile("data.json") == False:
+    print("Creating json file!")
+    dt = open("data.json", "w")
+    temp = {"channellast":{}, "useremojis":{emoji: {}}}
+    dt.write("{\"channellast\":{}, \"useremojis\":{\"%s\":{}}}" % emoji)
+    datajson = {"channellast":{},"useremojis":{emoji:{}}}
+    dt.close()
+else:
+    f = open("data.json", "r")
+    datajson = json.load(f)
+    f.close()
+    for i in datajson["useremojis"][emoji]:
+        for _i in range(datajson["useremojis"][emoji][i]):
+            messagesemoji.append(int(i))
+def jsonupdate():
+    f = open("data.json", "w")
+    json.dump(datajson, f)
+    f.close()
+try:
+    datajson["useremojis"][emoji]
+except:
+    temp = {emoji:{}}
+    datajson["useremojis"].update(temp)
+else:
+    pass
 def transform(message):
     for emojis in message.reactions:
         if emoji == str(emojis):
@@ -52,14 +79,37 @@ async def on_ready():
         for aaa in ids:
             channel = await client.fetch_channel(aaa)
             print(channel.name)
-            async for content in channel.history(limit=None).map(transform):
-                if content == None:
-                    pass
-                else:
-                    f = open("users.list", "a")
-                    #print(content)
-                    f.write(content)
-                    f.close()
+            try:
+                datajson["channellast"][str(aaa)]
+            except Exception as e:
+                print(e)
+                timech = None
+            else:
+                timech = datajson["channellast"][str(aaa)]
+            #print(timech)
+            if timech == None:
+                async for content in channel.history(limit=None).map(transform):
+                    if content == None:
+                        pass
+                    else:
+                        f = open("users.list", "a")
+                        #print(content)
+                        f.write(content)
+                        f.close()
+                temp = {str(aaa): time.time()}
+                datajson["channellast"].update(temp)
+                del temp
+            else:
+                async for content in channel.history(limit=None, after=datetime.datetime.utcfromtimestamp(int(timech))).map(transform):
+                    if content == None:
+                        pass
+                    else:
+                        f = open("users.list", "a")
+                        #print(content)
+                        f.write(content)
+                        f.close()
+                datajson["channellast"][str(aaa)] = time.time()
+        jsonupdate()
         atime2 = int(time.time())
         atimepass = atime2 - atime
         print("Done in %s!" % str(datetime.timedelta(seconds=atimepass)))
@@ -92,7 +142,7 @@ async def reactions(ctx, *amount):
     users = {}
     for a in sorted_keys:
         users[a] = users2[a]
-    print(users)
+    #print(users)
     users = list(users)
     if times > 0:
         users = users[:times]
@@ -100,6 +150,15 @@ async def reactions(ctx, *amount):
     for y in users:
         osoba = y
         append3.append("<@%s>: %i" % (osoba, globals()[osoba]))
+        temp = {osoba: globals()[osoba]}
+        try:
+            datajson["useremojis"][emoji][osoba]
+        except Exception as e:
+            print(e)
+            datajson["useremojis"][emoji].update(temp)
+        else:
+            datajson["useremojis"][emoji][str(osoba)] = globals()[osoba]
+    jsonupdate()
     append2 = '\n'.join(append3)
     x1 = len(append2)
     if x1 < 2001:
