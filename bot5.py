@@ -48,6 +48,13 @@ else:
     f = open("data.json", "r")
     datajson = json.load(f)
     f.close()
+    try:
+        datajson["useremojis"][emoji]
+    except:
+        temp = {emoji:{}}
+        datajson["useremojis"].update(temp)
+    else:
+        pass
     for i in datajson["useremojis"][emoji]:
         for _i in range(datajson["useremojis"][emoji][i]):
             messagesemoji.append(int(i))
