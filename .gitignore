@@ -4,3 +4,4 @@ config.yml
 __pycache__
 SearchEmoji.zip
 users.list
+data.json

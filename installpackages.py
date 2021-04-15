@@ -1,4 +1,6 @@
 import time
 import os
-os.system("pip install -r requirements.txt") #Windows Only
-time.sleep(1)
+if os.name == "nt":
+    os.system("pip install -r requirements.txt") #Windows Only
+else:
+    os.system("python3 -m pip install -r requirements.txt")
